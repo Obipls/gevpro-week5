@@ -8,26 +8,26 @@ from collections import Counter
 from PyQt4 import QtGui,QtCore
 
 class ShowResults(QtGui.QWidget):
-    
-    def __init__(self,argv):
-        self.argv=argv
-        super(ShowResults,self).__init__()
-        self.initUI()  
-        
-    def initUI(self):
-    	self.hbox=QtGui.QHBoxLayout()
-    	self.vbox=QtGui.QVBoxLayout()
-    	self.vbox.addLayout(self.hbox)
-    	self.setLayout(self.vbox)
-    	
-    	for item in main(self.argv):
+
+	def __init__(self,argv):
+		self.argv=argv
+		super(ShowResults,self).__init__()
+		self.initUI()  
+ 
+	def initUI(self):
+		self.hbox=QtGui.QHBoxLayout()
+		self.vbox=QtGui.QVBoxLayout()
+		self.vbox.addLayout(self.hbox)
+		self.setLayout(self.vbox)
+	
+		for item in main(self.argv):
 			lbl=QtGui.QLabel(str(item[0]+' '+str(item[1])),self)
 			lbl.setAlignment(QtCore.Qt.AlignRight)
 			self.vbox.addWidget(lbl)
 			
-    	self.setGeometry(200, 200, 100, 150)
-    	self.setWindowTitle('Top Unigrams')
-    	self.show()
+		self.setGeometry(200, 200, 100, 150)
+		self.setWindowTitle('Top Unigrams')
+		self.show()
 
 
 def main(argv):

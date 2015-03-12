@@ -14,43 +14,54 @@ class ShowGrams(QtGui.QWidget):
 		self.initUI()  
 	 
 	def initUI(self):
+		self.x=1
+		self.scroll=QtGui.QScrollArea()
 		self.hbox=QtGui.QHBoxLayout()
 		self.vbox=QtGui.QVBoxLayout()
 		self.vbox.addLayout(self.hbox)
+		self.vbox.addSpacing(0)
 		self.setLayout(self.vbox)
 		
 		self.cbox=QtGui.QComboBox(self)
-		self.cbox.addItems(["unigrams","bigrams"])
+		self.cbox.addItems(["Unigrams","Bigrams"])
 		self.vbox.addWidget(self.cbox)
 		self.cbox.currentIndexChanged['QString'].connect(self.handleChanged)
 		
 		self.button=QtGui.QPushButton('Kies een bestand', self)
-			
+		self.button.setStyleSheet("text-align:left")
 		self.button.clicked.connect(self.clickSelect)
 		self.vbox.addWidget(self.button)
+
+		self.ilist=QtGui.QListWidget()
+		
 							
-		self.setGeometry(200, 200, 100, 150)
+		self.setGeometry(250,250,250,250)
 		self.setWindowTitle('Gramselector')
 		self.show()
 	
 	def handleChanged(self):
-		self.x=1
-		if self.cbox.currentText()=='bigrams':
+		if self.cbox.currentText()=='Bigrams':
 			self.x=2
+		else:
+			self.x=1
 		return self.x
+
+	def showResults(self,results):
+		for item in results:
+			self.ilist.addItem(str(item[1])+':'+'  '+item[0])
+		self.vbox.addWidget(self.ilist)
 		
 	def clickSelect(self):
+		self.ilist.clear()
 		userFile=QtGui.QFileDialog.getOpenFileName(self)
 		wordCount=biCount=Counter()
 		if self.x==1:
 			for line in open(userFile):
 				wordCount.update(line.split())
-			print wordCount.most_common(20)
-			for item in wordCount.most_common(20):
-				lbl=QtGui.QLabel(str(item[0]+'    '+str(item[1])),self)
-				lbl.setAlignment(QtCore.Qt.AlignRight)
-				self.vbox.addWidget(lbl)
+			self.showResults(wordCount.most_common(20))
+
 		else:
+			biGramList=[]
 			biDict={}
 			for line in open(userFile):
 				senLen=len(line.split())
@@ -63,10 +74,9 @@ class ShowGrams(QtGui.QWidget):
 					biDict[biGramConc]=words[:2]
 					words.pop(0)
 			for item in biCount.most_common(20):
-				#print ' '.join(biDict.get(str(item[0])))
-				lbl=QtGui.QLabel(' '.join(biDict.get(str(item[0])))+'    '+str(item[1]),self)
-				lbl.setAlignment(QtCore.Qt.AlignRight)
-				self.vbox.addWidget(lbl)
+				words=' '.join(biDict.get(str(item[0])))
+				biGramList.append((words,item[1]))
+			self.showResults(biGramList)
 				
 if __name__=="__main__":
 	app=QtGui.QApplication(sys.argv)
